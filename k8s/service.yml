@@ -24,7 +24,7 @@ spec:
       imagePullSecrets:
         - name: regcred
       containers:
-        - name: agent
+        - name: hooks-service
           image: containers.chewedfeed.com/k8sdeploy/hooks-service:latest
           imagePullPolicy: Always
           readinessProbe:

@@ -52,4 +52,13 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           push: true
           build-args: SERVICE_NAME=agent,VERSION=${{ github.ref_name }},BUILD=${{ github.sha }}
+      - name: Deploy
+        uses: keloran/github-action@v1
+        with:
+          service-namespace: k8sdeploy
+          service-name: hooks-service
+          k8sdeploy-key: "bob"
+          k8sdeploy-secret: "bob"
+          image-hash: ${{ github.sha }}
+          image-tag: ${{ github.ref_name }}
 

@@ -1,6 +1,7 @@
 package hooks
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/k8sdeploy/hooks-service/internal/config"
 	"net/http"
@@ -17,5 +18,12 @@ func NewHooks(cfg *config.Config) *Hooks {
 }
 
 func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
-	_ = fmt.Sprintf("%s", r.Body)
+	var i interface{}
+
+	if err := json.NewDecoder(r.Body).Decode(&i); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	fmt.Printf(" %+v\n", i)
 }

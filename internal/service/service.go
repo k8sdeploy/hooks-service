@@ -34,7 +34,7 @@ func (s *Service) checkAPIKey(next http.Handler) http.Handler {
 
 func (s *Service) startHTTP(errChan chan error) {
 	p := fmt.Sprintf(":%d", s.Config.Local.HTTPPort)
-	bugLog.Local().Infof("Starting agent on %s", p)
+	bugLog.Local().Infof("Starting hooks-service on %s", p)
 
 	r := chi.NewRouter()
 	r.Get("/health", healthcheck.HTTP)
