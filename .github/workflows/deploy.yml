@@ -53,7 +53,7 @@ jobs:
           push: true
           build-args: SERVICE_NAME=agent,VERSION=${{ github.ref_name }},BUILD=${{ github.sha }}
       - name: Deploy
-        uses: keloran/github-action@v1
+        uses: k8sdeploy/github-action@v1
         with:
           service-namespace: k8sdeploy
           service-name: hooks-service
