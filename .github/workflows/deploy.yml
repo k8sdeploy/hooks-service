@@ -57,8 +57,8 @@ jobs:
         with:
           service-namespace: k8sdeploy
           service-name: hooks-service
-          k8sdeploy-key: "bob"
-          k8sdeploy-secret: "bob"
+          k8sdeploy-key: ${{ secrets.K8SDEPLOY_KEY }}
+          k8sdeploy-secret: ${{ secrets.K8SDEPLOY_SECRET }}
           image-hash: ${{ github.sha }}
           image-tag: ${{ github.ref_name }}
 
