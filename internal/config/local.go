@@ -3,13 +3,19 @@ package config
 import "github.com/caarlos0/env/v6"
 
 type OrchestratorService struct {
-	Key     string `env:"AGENT_KEY"`
-	ID      string `env:"AGENT_ID"`
+	Key     string `env:"HOOKS_KEY"`
+	Secret  string `env:"HOOKS_SECRET"`
 	Address string `env:"ORCHESTRATOR_ADDRESS" envDefault:"https://api.k8sdeploy.dev"`
+}
+type KeyService struct {
+	Key     string `env:"HOOKS_KEY"`
+	Secret  string `env:"HOOKS_SECRET"`
+	Address string `env:"KEY_SERVICE_ADDRESS" envDefault:"key-service.k8sdeploy"`
 }
 
 type Services struct {
 	OrchestratorService
+	KeyService
 }
 
 type Local struct {
@@ -19,11 +25,38 @@ type Local struct {
 	Services    `json:"services"`
 }
 
+func buildServiceKeys(cfg *Config) error {
+	vaultSecrets, err := cfg.getVaultSecrets("kv/data/k8sdeploy/api-keys")
+	if err != nil {
+		return err
+	}
+	secrets, err := ParseKVSecrets(vaultSecrets)
+	if err != nil {
+		return err
+	}
+
+	for _, secret := range secrets {
+		switch secret.Key {
+		case "orchestrator":
+			cfg.Local.OrchestratorService.Key = secret.Value
+		case "hooks":
+			cfg.Local.KeyService.Key = secret.Value
+		}
+	}
+
+	return nil
+}
+
 func BuildLocal(cfg *Config) error {
 	local := &Local{}
 	if err := env.Parse(local); err != nil {
 		return err
 	}
 	cfg.Local = *local
+
+	if err := buildServiceKeys(cfg); err != nil {
+		return err
+	}
+
 	return nil
 }

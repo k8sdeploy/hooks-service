@@ -7,12 +7,17 @@ import (
 
 type Config struct {
 	Local
+	Vault
 }
 
 func Build() (*Config, error) {
 	cfg := &Config{}
 
 	if err := env.Parse(cfg); err != nil {
+		return nil, bugLog.Error(err)
+	}
+
+	if err := BuildVault(cfg); err != nil {
 		return nil, bugLog.Error(err)
 	}
 
