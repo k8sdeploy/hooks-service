@@ -22,10 +22,6 @@ func NewHooks(cfg *config.Config) *Hooks {
 	}
 }
 
-type GithubEvent struct {
-	Action   string `json:"action"`
-	ReposURL string `json:"repos_url"`
-}
 type K8sDeployEvent struct {
 	ImageHash        string `json:"imageHash"`
 	ImageTag         string `json:"imageTag"`
