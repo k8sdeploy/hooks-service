@@ -74,13 +74,16 @@ func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
 		}
 	}()
 
-	c := keybuf.NewKeyServiceClient(conn)
-	resp, err := c.ValidateHookKey(context.Background(), &keybuf.ValidateSystemKeyRequest{
+	r := keybuf.ValidateSystemKeyRequest{
 		ServiceKey: h.Config.Local.KeyService.Key,
 		CompanyId:  companyId,
 		Key:        key,
 		Secret:     secret,
-	})
+	}
+	fmt.Printf("r: %+v\n", &r)
+
+	c := keybuf.NewKeyServiceClient(conn)
+	resp, err := c.ValidateHookKey(context.Background(), &r)
 	if err != nil {
 		return false, err
 	}
