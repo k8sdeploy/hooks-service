@@ -5,7 +5,7 @@ import "github.com/caarlos0/env/v6"
 type OrchestratorService struct {
 	Key     string `env:"HOOKS_KEY"`
 	Secret  string `env:"HOOKS_SECRET"`
-	Address string `env:"ORCHESTRATOR_ADDRESS" envDefault:"https://api.k8sdeploy.dev"`
+	Address string `env:"ORCHESTRATOR_ADDRESS" envDefault:"orchestrator.k8sdeploy:8001"`
 }
 type KeyService struct {
 	Key     string `env:"HOOKS_KEY"`
@@ -37,10 +37,9 @@ func buildServiceKeys(cfg *Config) error {
 
 	for _, secret := range secrets {
 		switch secret.Key {
-		case "orchestrator":
-			cfg.Local.OrchestratorService.Key = secret.Value
 		case "hooks":
 			cfg.Local.KeyService.Key = secret.Value
+			cfg.Local.OrchestratorService.Key = secret.Value
 		}
 	}
 

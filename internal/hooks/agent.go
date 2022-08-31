@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/k8sdeploy/hooks-service/internal/config"
 	keybuf "github.com/k8sdeploy/protos/generated/key/v1"
+	orcbuf "github.com/k8sdeploy/protos/generated/orchestrator/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net/http"
@@ -58,11 +59,11 @@ func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Printf("githubEvent: %+v\n", i)
 
-	//if err := h.OrchestratorDeploy(i); err != nil {
-	//	fmt.Printf("failed to deploy: %v", err)
-	//	w.WriteHeader(http.StatusInternalServerError)
-	//	return
-	//}
+	if err := h.InformOrchestrator(i); err != nil {
+		fmt.Printf("failed to inform orchestrator: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 }
@@ -83,21 +84,17 @@ func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
 		}
 	}()
 
-	r := keybuf.ValidateSystemKeyRequest{
+	c := keybuf.NewKeyServiceClient(conn)
+	resp, err := c.ValidateHookKey(context.Background(), &keybuf.ValidateSystemKeyRequest{
 		ServiceKey: h.Config.Local.KeyService.Key,
 		CompanyId:  companyId,
 		Key:        key,
 		Secret:     secret,
-	}
-	fmt.Printf("r: %+v\n", &r)
-
-	c := keybuf.NewKeyServiceClient(conn)
-	resp, err := c.ValidateHookKey(context.Background(), &r)
+	})
 	if err != nil {
 		fmt.Printf("validateKey failed to validate key: %v", err)
 		return false, err
 	}
-	fmt.Printf("validateKey resp: %+v\n", resp)
 
 	if resp.Status != nil {
 		return false, errors.New(*resp.Status)
@@ -110,9 +107,46 @@ func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
 	return false, nil
 }
 
-func (h *Hooks) OrchestratorDeploy(i HookEvent) error {
-	if h.Config.Development {
-		return nil
+func (h *Hooks) InformOrchestrator(i HookEvent) error {
+	conn, err := grpc.Dial(h.Config.Local.OrchestratorService.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		fmt.Printf("InformOrchestrator failed to dial orchestrator service: %v", err)
+		return err
 	}
+	defer func() {
+		if err := conn.Close(); err != nil {
+			fmt.Printf("failed to close connection: %v", err)
+		}
+	}()
+
+	ob := &orcbuf.DeploymentRequest{
+		ServiceKey: h.Config.Local.OrchestratorService.Key,
+		K8SDetails: &orcbuf.K8SDetails{
+			ImageHash:        i.ImageHash,
+			ImageTag:         i.ImageTag,
+			ServiceName:      i.ServiceName,
+			ServiceNamespace: i.ServiceNamespace,
+		},
+	}
+
+	if i.GithubEvent.GithubCommits != nil {
+		ob.AuthorDetails = &orcbuf.AuthorDetails{
+			Username: i.GithubEvent.GithubCommits[0].Author.Username,
+			Name:     i.GithubEvent.GithubCommits[0].Author.Name,
+			Email:    i.GithubEvent.GithubCommits[0].Author.Email,
+		}
+		ob.CommitMessage = &i.GithubEvent.GithubCommits[0].Message
+		ob.CommitId = &i.GithubEvent.GithubCommits[0].ID
+		ob.CommitUrl = &i.GithubEvent.GithubCommits[0].URL
+	}
+
+	c := orcbuf.NewOrchestratorClient(conn)
+	resp, err := c.Deploy(context.Background(), ob)
+	if err != nil {
+		fmt.Printf("InformOrchestrator failed to inform orchestrator: %v", err)
+		return err
+	}
+	fmt.Printf("InformOrchestrator response: %+v\n", resp)
+
 	return nil
 }

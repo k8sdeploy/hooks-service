@@ -155,6 +155,16 @@ github.com/k8sdeploy/protos v0.0.3 h1:Sf33lUFVvHkkwwmbqZpZ6wS1OtC/KGvyTzjFEVDLGS
 github.com/k8sdeploy/protos v0.0.3/go.mod h1:LPR4MQqBAgOpywLfSCHlnEpuD5JqXIjhJrJ4U1cDKAs=
 github.com/k8sdeploy/protos v0.0.6 h1:lV/buOo9bjJ94KKyuKKU/GKcUAxfq/klEXkq657ldSQ=
 github.com/k8sdeploy/protos v0.0.6/go.mod h1:LPR4MQqBAgOpywLfSCHlnEpuD5JqXIjhJrJ4U1cDKAs=
+github.com/k8sdeploy/protos v0.1.0 h1:Ek4Z8VQHOc0dSkkSIyM2Def1fe1ndOTysyDzoT3Fq6U=
+github.com/k8sdeploy/protos v0.1.0/go.mod h1:LPR4MQqBAgOpywLfSCHlnEpuD5JqXIjhJrJ4U1cDKAs=
+github.com/k8sdeploy/protos v0.1.1 h1:iA+SUPEDyzhczD7u6aQOvDt22Jd9o62dn30ar4j01Rw=
+github.com/k8sdeploy/protos v0.1.1/go.mod h1:LPR4MQqBAgOpywLfSCHlnEpuD5JqXIjhJrJ4U1cDKAs=
+github.com/k8sdeploy/protos v0.1.2 h1:kYGqhpub399SDNBLK6u1FZc8TKcknER9HV6ZX5x+yqk=
+github.com/k8sdeploy/protos v0.1.2/go.mod h1:LPR4MQqBAgOpywLfSCHlnEpuD5JqXIjhJrJ4U1cDKAs=
+github.com/k8sdeploy/protos v0.1.3 h1:jVbybCDnXUzZRf2J6teaeyv2hYBmovM3Ndt0cHheeJ8=
+github.com/k8sdeploy/protos v0.1.3/go.mod h1:LPR4MQqBAgOpywLfSCHlnEpuD5JqXIjhJrJ4U1cDKAs=
+github.com/k8sdeploy/protos v0.1.4 h1:GKh49KAgfdOY4sCCCNig+G5dspDPQgAIKd6ecnjsSoU=
+github.com/k8sdeploy/protos v0.1.4/go.mod h1:LPR4MQqBAgOpywLfSCHlnEpuD5JqXIjhJrJ4U1cDKAs=
 github.com/keloran/go-healthcheck v1.2.0 h1:cm8HkEXK7V+qiHAPTIyz6RdatRIYyPU+WwR60jh+mMg=
 github.com/keloran/go-healthcheck v1.2.0/go.mod h1:y/BX0zm3gVij5D9eyFW1dlF2i0LJ1tQszRreVnwzejM=
 github.com/keloran/go-probe v1.0.0 h1:OAO7f71lRJIz+rF7iGAeBj4i86NaUazL8DaVf9dVJGU=

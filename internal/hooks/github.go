@@ -18,8 +18,9 @@ type GithubRelease struct {
 
 type GithubCommit struct {
 	Author struct {
-		Name  string `json:"name,omitempty"`
-		Email string `json:"email,omitempty"`
+		Name     string `json:"name,omitempty"`
+		Email    string `json:"email,omitempty"`
+		Username string `json:"username,omitempty"`
 	} `json:"author,omitempty"`
 	Committer struct {
 		Name  string `json:"name,omitempty"`
