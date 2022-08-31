@@ -36,7 +36,7 @@ type HookEvent struct {
 }
 
 func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
-	var i interface{}
+	var i HookEvent
 
 	companyId := r.Header.Get("X-API-ID")
 	key := r.Header.Get("X-API-KEY")
