@@ -16,9 +16,24 @@ type GithubRelease struct {
 	ID        int    `json:"id"`
 }
 
+type GithubCommit struct {
+	Author struct {
+		Name  string `json:"name,omitempty"`
+		Email string `json:"email,omitempty"`
+	} `json:"author,omitempty"`
+	Committer struct {
+		Name  string `json:"name,omitempty"`
+		Email string `json:"email,omitempty"`
+	} `json:"committer,omitempty"`
+	Message string `json:"message,omitempty"`
+	ID      string `json:"id,omitempty"`
+	URL     string `json:"url,omitempty"`
+}
+
 type GithubEvent struct {
 	GithubOrganization `json:"organization,omitempty"`
 	GithubSender       `json:"sender,omitempty"`
 	GithubRelease      `json:"release,omitempty"`
-	Action             string `json:"action,omitempty"`
+	GithubCommits      []GithubCommit `json:"commits,omitempty"`
+	Action             string         `json:"action,omitempty"`
 }
