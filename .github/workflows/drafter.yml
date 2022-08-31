@@ -21,6 +21,6 @@ jobs:
           service-name: hooks-service
           k8sdeploy-key: ${{ secrets.K8SDEPLOY_KEY }}
           k8sdeploy-secret: ${{ secrets.K8SDEPLOY_SECRET }}
-          k8desploy-id: ${{ secrets.K8SDEPLOY_ID }}
+          k8sdeploy-id: ${{ secrets.K8SDEPLOY_ID }}
           image-hash: ${{ github.sha }}
           image-tag: ${{ github.ref_name }}
