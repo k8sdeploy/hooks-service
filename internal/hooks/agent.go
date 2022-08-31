@@ -35,7 +35,7 @@ type HookEvent struct {
 }
 
 func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
-	var i HookEvent
+	var i interface{}
 
 	companyId := r.Header.Get("X-API-ID")
 	key := r.Header.Get("X-API-KEY")
@@ -57,11 +57,11 @@ func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.OrchestratorDeploy(i); err != nil {
-		fmt.Printf("failed to deploy: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	//if err := h.OrchestratorDeploy(i); err != nil {
+	//	fmt.Printf("failed to deploy: %v", err)
+	//	w.WriteHeader(http.StatusInternalServerError)
+	//	return
+	//}
 
 	w.WriteHeader(http.StatusOK)
 }
