@@ -56,6 +56,7 @@ func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	fmt.Printf("githubEvent: %+v\n", i)
 
 	//if err := h.OrchestratorDeploy(i); err != nil {
 	//	fmt.Printf("failed to deploy: %v", err)
