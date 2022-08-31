@@ -59,7 +59,7 @@ func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
 	}
 	//fmt.Printf("githubEvent: %+v\n", i)
 
-	if err := h.InformOrchestrator(i); err != nil {
+	if err := h.InformOrchestrator(i, companyId, key, secret); err != nil {
 		fmt.Printf("failed to inform orchestrator: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -107,7 +107,7 @@ func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
 	return false, nil
 }
 
-func (h *Hooks) InformOrchestrator(i HookEvent) error {
+func (h *Hooks) InformOrchestrator(i HookEvent, companyId, key, secret string) error {
 	conn, err := grpc.Dial(h.Config.Local.OrchestratorService.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		fmt.Printf("InformOrchestrator failed to dial orchestrator service: %v", err)
@@ -126,6 +126,11 @@ func (h *Hooks) InformOrchestrator(i HookEvent) error {
 			ImageTag:         i.ImageTag,
 			ServiceName:      i.ServiceName,
 			ServiceNamespace: i.ServiceNamespace,
+			HookDetails: &orcbuf.HookDetails{
+				Id:     companyId,
+				Key:    key,
+				Secret: secret,
+			},
 		},
 	}
 
