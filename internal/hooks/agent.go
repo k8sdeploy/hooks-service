@@ -22,8 +22,24 @@ func NewHooks(cfg *config.Config) *Hooks {
 	}
 }
 
+type GithubEvent struct {
+	Action   string `json:"action"`
+	ReposURL string `json:"repos_url"`
+}
+type K8sDeployEvent struct {
+	ImageHash        string `json:"imageHash"`
+	ImageTag         string `json:"imageTag"`
+	ServiceName      string `json:"serviceName"`
+	ServiceNamespace string `json:"serviceNamespace"`
+}
+
+type HookEvent struct {
+	GithubEvent
+	K8sDeployEvent
+}
+
 func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
-	var i interface{}
+	var i HookEvent
 
 	companyId := r.Header.Get("X-API-ID")
 	key := r.Header.Get("X-API-KEY")
@@ -44,7 +60,7 @@ func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf(" %+v\n", i)
+	fmt.Printf("\n\nevent: %+v\n\n", i)
 }
 
 func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
@@ -64,9 +80,10 @@ func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
 
 	c := keybuf.NewKeyServiceClient(conn)
 	resp, err := c.ValidateHookKey(context.Background(), &keybuf.ValidateSystemKeyRequest{
-		CompanyId: companyId,
-		Key:       key,
-		Secret:    secret,
+		ServiceKey: h.Config.Local.KeyService.Key,
+		CompanyId:  companyId,
+		Key:        key,
+		Secret:     secret,
 	})
 	if err != nil {
 		return false, err
