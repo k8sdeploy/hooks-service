@@ -10,7 +10,7 @@ type OrchestratorService struct {
 type KeyService struct {
 	Key     string `env:"HOOKS_KEY"`
 	Secret  string `env:"HOOKS_SECRET"`
-	Address string `env:"KEY_SERVICE_ADDRESS" envDefault:"key-service.k8sdeploy"`
+	Address string `env:"KEY_SERVICE_ADDRESS" envDefault:"key-service.k8sdeploy:8001"`
 }
 
 type Services struct {
