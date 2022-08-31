@@ -57,13 +57,13 @@ func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	fmt.Printf("githubEvent: %+v\n", i)
+	//fmt.Printf("githubEvent: %+v\n", i)
 
-	//if err := h.InformOrchestrator(i); err != nil {
-	//	fmt.Printf("failed to inform orchestrator: %v", err)
-	//	w.WriteHeader(http.StatusInternalServerError)
-	//	return
-	//}
+	if err := h.InformOrchestrator(i); err != nil {
+		fmt.Printf("failed to inform orchestrator: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 }
