@@ -39,6 +39,11 @@ spec:
               value: "false"
             - name: SERVICE_NAME
               value: hooks-service
+            - name: VAULT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: k8sdeploy-vault-token
+                  key: token
 
 ---
 apiVersion: v1
