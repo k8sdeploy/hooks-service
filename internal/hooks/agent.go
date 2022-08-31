@@ -52,11 +52,13 @@ func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&i); err != nil {
+		fmt.Printf("failed to decode body: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	fmt.Printf("\n\nevent: %+v\n\n", i)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
