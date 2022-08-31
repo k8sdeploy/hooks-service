@@ -66,6 +66,7 @@ func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
 
 	conn, err := grpc.Dial(h.Config.Local.KeyService.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
+		fmt.Printf("validateKey failed to dial key service: %v", err)
 		return false, err
 	}
 	defer func() {
@@ -85,8 +86,10 @@ func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
 	c := keybuf.NewKeyServiceClient(conn)
 	resp, err := c.ValidateHookKey(context.Background(), &r)
 	if err != nil {
+		fmt.Printf("validateKey failed to validate key: %v", err)
 		return false, err
 	}
+	fmt.Printf("validateKey resp: %+v\n", resp)
 
 	if resp.Status != nil {
 		return false, errors.New(*resp.Status)
