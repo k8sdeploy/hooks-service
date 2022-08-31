@@ -30,12 +30,12 @@ type K8sDeployEvent struct {
 }
 
 type HookEvent struct {
-	GithubEvent
+	GithubEvent GithubEvent `json:"fullPayload"`
 	K8sDeployEvent
 }
 
 func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
-	var i interface{}
+	var i HookEvent
 
 	companyId := r.Header.Get("X-API-ID")
 	key := r.Header.Get("X-API-KEY")
@@ -57,7 +57,12 @@ func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("\n\nevent: %+v\n\n", i)
+	if err := h.OrchestratorDeploy(i); err != nil {
+		fmt.Printf("failed to deploy: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -102,4 +107,11 @@ func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func (h *Hooks) OrchestratorDeploy(i HookEvent) error {
+	if h.Config.Development {
+		return nil
+	}
+	return nil
 }

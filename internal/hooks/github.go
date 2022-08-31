@@ -5,11 +5,20 @@ type GithubOrganization struct {
 	ReposURL  string `json:"repos_url"`
 }
 
-type GithubFullPayload struct {
-	GithubOrganization `json:"organization"`
-	Action             string `json:"action"`
+type GithubSender struct {
+	ID    int    `json:"id"`
+	Login string `json:"login"`
+}
+
+type GithubRelease struct {
+	AssetsURL string `json:"assets_url"`
+	HTMLURL   string `json:"html_url"`
+	ID        int    `json:"id"`
 }
 
 type GithubEvent struct {
-	GithubFullPayload `json:"fullPayload"`
+	GithubOrganization `json:"organization,omitempty"`
+	GithubSender       `json:"sender,omitempty"`
+	GithubRelease      `json:"release,omitempty"`
+	Action             string `json:"action,omitempty"`
 }
