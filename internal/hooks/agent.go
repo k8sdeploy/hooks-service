@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/k8sdeploy/hooks-service/internal/config"
 	keybuf "github.com/k8sdeploy/protos/generated/key/v1"
 	orcbuf "github.com/k8sdeploy/protos/generated/orchestrator/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"net/http"
 )
 
 type Hooks struct {
@@ -38,15 +39,15 @@ type HookEvent struct {
 func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
 	var i HookEvent
 
-	companyId := r.Header.Get("X-API-ID")
+	companyID := r.Header.Get("X-API-ID")
 	key := r.Header.Get("X-API-KEY")
 	secret := r.Header.Get("X-API-SECRET")
 
-	if companyId == "" || key == "" || secret == "" {
+	if companyID == "" || key == "" || secret == "" {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	if ok, err := h.ValidateKey(companyId, key, secret); !ok {
+	if ok, err := h.ValidateKey(companyID, key, secret); !ok {
 		fmt.Printf("failed to validate key: %v", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -57,9 +58,9 @@ func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	//fmt.Printf("githubEvent: %+v\n", i)
+	// fmt.Printf("githubEvent: %+v\n", i)
 
-	if err := h.InformOrchestrator(i, companyId, key, secret); err != nil {
+	if err := h.InformOrchestrator(i, companyID, key, secret); err != nil {
 		fmt.Printf("failed to inform orchestrator: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -68,7 +69,7 @@ func (h *Hooks) HandleHook(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
+func (h *Hooks) ValidateKey(companyID, key, secret string) (bool, error) {
 	if h.Config.Development {
 		return true, nil
 	}
@@ -87,7 +88,7 @@ func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
 	c := keybuf.NewKeyServiceClient(conn)
 	resp, err := c.ValidateHookKey(context.Background(), &keybuf.ValidateSystemKeyRequest{
 		ServiceKey: h.Config.Local.KeyService.Key,
-		CompanyId:  companyId,
+		CompanyId:  companyID,
 		Key:        key,
 		Secret:     secret,
 	})
@@ -107,7 +108,7 @@ func (h *Hooks) ValidateKey(companyId, key, secret string) (bool, error) {
 	return false, nil
 }
 
-func (h *Hooks) InformOrchestrator(i HookEvent, companyId, key, secret string) error {
+func (h *Hooks) InformOrchestrator(i HookEvent, companyID, key, secret string) error {
 	conn, err := grpc.Dial(h.Config.Local.OrchestratorService.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		fmt.Printf("InformOrchestrator failed to dial orchestrator service: %v", err)
@@ -127,7 +128,7 @@ func (h *Hooks) InformOrchestrator(i HookEvent, companyId, key, secret string) e
 			ServiceName:      i.ServiceName,
 			ServiceNamespace: i.ServiceNamespace,
 			HookDetails: &orcbuf.HookDetails{
-				Id:     companyId,
+				Id:     companyID,
 				Key:    key,
 				Secret: secret,
 			},

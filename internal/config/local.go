@@ -36,8 +36,7 @@ func buildServiceKeys(cfg *Config) error {
 	}
 
 	for _, secret := range secrets {
-		switch secret.Key {
-		case "hooks":
+		if secret.Key == "hooks" {
 			cfg.Local.KeyService.Key = secret.Value
 			cfg.Local.OrchestratorService.Key = secret.Value
 		}

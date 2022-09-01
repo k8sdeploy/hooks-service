@@ -2,6 +2,9 @@ package service
 
 import (
 	"fmt"
+	"net/http"
+	"time"
+
 	bugLog "github.com/bugfixes/go-bugfixes/logs"
 	bugMiddleware "github.com/bugfixes/go-bugfixes/middleware"
 	"github.com/go-chi/chi/v5"
@@ -11,7 +14,6 @@ import (
 	"github.com/k8sdeploy/hooks-service/internal/hooks"
 	"github.com/keloran/go-healthcheck"
 	"github.com/keloran/go-probe"
-	"net/http"
 )
 
 type Service struct {
@@ -54,7 +56,15 @@ func (s *Service) startHTTP(errChan chan error) {
 		r.Post("/", hooks.NewHooks(s.Config).HandleHook)
 	})
 
-	if err := http.ListenAndServe(p, r); err != nil {
+	srv := &http.Server{
+		Addr:              p,
+		Handler:           r,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      10 * time.Second,
+	}
+
+	if err := srv.ListenAndServe(); err != nil {
 		errChan <- err
 	}
 }
