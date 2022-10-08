@@ -11,6 +11,7 @@ spec:
   replicas: 2
   strategy:
     rollingUpdate:
+      maxSurge: 5
       maxUnavailable: 1
   selector:
     matchLabels:
