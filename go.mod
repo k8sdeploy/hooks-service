@@ -11,7 +11,7 @@ require (
 	github.com/k8sdeploy/protos v0.1.5
 	github.com/keloran/go-healthcheck v1.2.0
 	github.com/keloran/go-probe v1.0.0
-	google.golang.org/grpc v1.50.0
+	google.golang.org/grpc v1.50.1
 )
 
 require (
