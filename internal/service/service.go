@@ -1,23 +1,20 @@
 package service
 
 import (
-	"fmt"
-	"net/http"
-	"time"
+  "fmt"
+  ConfigBuilder "github.com/keloran/go-config"
+  "net/http"
+  "time"
 
-	bugLog "github.com/bugfixes/go-bugfixes/logs"
-	bugMiddleware "github.com/bugfixes/go-bugfixes/middleware"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/httplog"
-	"github.com/k8sdeploy/hooks-service/internal/config"
-	"github.com/k8sdeploy/hooks-service/internal/hooks"
-	"github.com/keloran/go-healthcheck"
-	"github.com/keloran/go-probe"
+  "github.com/bugfixes/go-bugfixes/logs"
+  bugMiddleware "github.com/bugfixes/go-bugfixes/middleware"
+  "github.com/go-chi/chi/v5/middleware"
+  "github.com/go-chi/httplog"
+  "github.com/k8sdeploy/hooks-service/internal/hooks"
 )
 
 type Service struct {
-	Config *config.Config
+	Config *ConfigBuilder.Config
 }
 
 func (s *Service) Start() error {
@@ -36,7 +33,7 @@ func (s *Service) checkAPIKey(next http.Handler) http.Handler {
 
 func (s *Service) startHTTP(errChan chan error) {
 	p := fmt.Sprintf(":%d", s.Config.Local.HTTPPort)
-	bugLog.Local().Infof("Starting hooks-service on %s", p)
+	logs.Local().Infof("Starting hooks-service on %s", p)
 
 	r := chi.NewRouter()
 	r.Get("/health", healthcheck.HTTP)

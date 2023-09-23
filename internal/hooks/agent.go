@@ -1,24 +1,24 @@
 package hooks
 
 import (
-	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"net/http"
+  "context"
+  "encoding/json"
+  "fmt"
+  "github.com/bugfixes/go-bugfixes/logs"
+  ConfigBuilder "github.com/keloran/go-config"
+  "net/http"
 
-	"github.com/k8sdeploy/hooks-service/internal/config"
-	keybuf "github.com/k8sdeploy/protos/generated/key/v1"
-	orcbuf "github.com/k8sdeploy/protos/generated/orchestrator/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+  keybuf "github.com/k8sdeploy/protos/generated/key/v1"
+  orcbuf "github.com/k8sdeploy/protos/generated/orchestrator/v1"
+  "google.golang.org/grpc"
+  "google.golang.org/grpc/credentials/insecure"
 )
 
 type Hooks struct {
-	Config *config.Config
+	Config *ConfigBuilder.Config
 }
 
-func NewHooks(cfg *config.Config) *Hooks {
+func NewHooks(cfg *ConfigBuilder.Config) *Hooks {
 	return &Hooks{
 		Config: cfg,
 	}
@@ -76,8 +76,7 @@ func (h *Hooks) ValidateKey(companyID, key, secret string) (bool, error) {
 
 	conn, err := grpc.Dial(h.Config.Local.KeyService.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		fmt.Printf("validateKey failed to dial key service: %v", err)
-		return false, err
+		return false, logs.Errorf("validateKey failed to dial key service: %v", err)
 	}
 	defer func() {
 		if err := conn.Close(); err != nil {
@@ -93,12 +92,11 @@ func (h *Hooks) ValidateKey(companyID, key, secret string) (bool, error) {
 		Secret:     secret,
 	})
 	if err != nil {
-		fmt.Printf("validateKey failed to validate key: %v", err)
-		return false, err
+		return false, logs.Errorf("validateKey failed to validate key: %v", err)
 	}
 
 	if resp.Status != nil {
-		return false, errors.New(*resp.Status)
+		return false, logs.Errorf("unknown status: %v", resp.Status)
 	}
 
 	if resp.Valid {
@@ -111,12 +109,11 @@ func (h *Hooks) ValidateKey(companyID, key, secret string) (bool, error) {
 func (h *Hooks) InformOrchestrator(i HookEvent, companyID, key, secret string) error {
 	conn, err := grpc.Dial(h.Config.Local.OrchestratorService.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		fmt.Printf("InformOrchestrator failed to dial orchestrator service: %v", err)
-		return err
+		return logs.Errorf("InformOrchestrator failed to dial orchestrator service: %v", err)
 	}
 	defer func() {
 		if err := conn.Close(); err != nil {
-			fmt.Printf("failed to close connection: %v", err)
+			_ = logs.Errorf("failed to close connection: %v", err)
 		}
 	}()
 
@@ -149,8 +146,7 @@ func (h *Hooks) InformOrchestrator(i HookEvent, companyID, key, secret string) e
 	c := orcbuf.NewOrchestratorClient(conn)
 	resp, err := c.Deploy(context.Background(), ob)
 	if err != nil {
-		fmt.Printf("InformOrchestrator failed to inform orchestrator: %v", err)
-		return err
+		return logs.Errorf("InformOrchestrator failed to inform orchestrator: %v", err)
 	}
 	fmt.Printf("InformOrchestrator response: %+v\n", resp)
 

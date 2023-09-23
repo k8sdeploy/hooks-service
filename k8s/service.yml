@@ -23,10 +23,10 @@ spec:
         name: hooks-service
     spec:
       imagePullSecrets:
-        - name: regcred
+        - name: docker-registry-secret
       containers:
         - name: hooks-service
-          image: containers.chewedfeed.com/k8sdeploy/hooks-service:v0.1.1
+          image: containers.chewed-k8s.net/k8sdeploy/hooks-service:v0.1.1
           imagePullPolicy: Always
           readinessProbe:
             httpGet:
@@ -45,7 +45,7 @@ spec:
                 secretKeyRef:
                   name: k8sdeploy-vault-token
                   key: token
-
+'
 ---
 apiVersion: v1
 kind: Service
@@ -72,7 +72,7 @@ metadata:
   name: hooks-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
-    cert-manager.io/cluster-issuer: acme-prod
+    cert-manager.io/cluster-issuer: live-issuer
   labels:
     app: hooks-service
 spec:
