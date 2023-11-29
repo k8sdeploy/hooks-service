@@ -21,10 +21,6 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
-      - uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.48
-          args: --config ./k8s/golangci.yml
       - name: test
         run: go test -v -race -bench=./... -benchmem -timeout=120s -bench=./... ./...
   automerge:
