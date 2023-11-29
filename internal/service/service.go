@@ -1,16 +1,19 @@
 package service
 
 import (
-  "fmt"
-  ConfigBuilder "github.com/keloran/go-config"
-  "net/http"
-  "time"
+	"fmt"
+	"net/http"
+	"time"
 
-  "github.com/bugfixes/go-bugfixes/logs"
-  bugMiddleware "github.com/bugfixes/go-bugfixes/middleware"
-  "github.com/go-chi/chi/v5/middleware"
-  "github.com/go-chi/httplog"
-  "github.com/k8sdeploy/hooks-service/internal/hooks"
+	"github.com/bugfixes/go-bugfixes/logs"
+	bugMiddleware "github.com/bugfixes/go-bugfixes/middleware"
+	chi "github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httplog"
+	"github.com/k8sdeploy/hooks-service/internal/hooks"
+	ConfigBuilder "github.com/keloran/go-config"
+	"github.com/keloran/go-healthcheck"
+	"github.com/keloran/go-probe"
 )
 
 type Service struct {
