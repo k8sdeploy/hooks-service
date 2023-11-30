@@ -2,8 +2,6 @@ module github.com/k8sdeploy/hooks-service
 
 go 1.21
 
-toolchain go1.21.1
-
 require (
 	github.com/bugfixes/go-bugfixes v0.9.7
 	github.com/caarlos0/env/v6 v6.10.1
