@@ -3,11 +3,12 @@ package config
 import (
 	bugLog "github.com/bugfixes/go-bugfixes/logs"
 	"github.com/caarlos0/env/v6"
+	ConfigBuilder "github.com/keloran/go-config"
 )
 
 type Config struct {
-	Local
-	Vault
+	ConfigBuilder.Config
+	K8sDeploy
 }
 
 func Build() (*Config, error) {
@@ -17,11 +18,13 @@ func Build() (*Config, error) {
 		return nil, bugLog.Error(err)
 	}
 
-	if err := BuildVault(cfg); err != nil {
+	c, err := ConfigBuilder.Build(ConfigBuilder.Local, ConfigBuilder.Vault)
+	if err != nil {
 		return nil, bugLog.Error(err)
 	}
+	cfg.Config = *c
 
-	if err := BuildLocal(cfg); err != nil {
+	if err := BuildK8sDeploy(cfg); err != nil {
 		return nil, bugLog.Error(err)
 	}
 
