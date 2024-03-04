@@ -1,6 +1,7 @@
 module github.com/k8sdeploy/hooks-service
 
 go 1.21
+toolchain go1.22.0
 
 require (
 	github.com/bugfixes/go-bugfixes v0.10.0
@@ -8,7 +9,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-chi/httplog v0.3.2
 	github.com/keloran/go-config v0.5.1
-	github.com/keloran/go-healthcheck v1.2.1
+	github.com/keloran/go-healthcheck v1.2.2
 	github.com/keloran/go-probe v1.0.0
 )
 
@@ -19,7 +20,7 @@ require (
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/go-ping/ping v1.1.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/uuid v1.4.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
